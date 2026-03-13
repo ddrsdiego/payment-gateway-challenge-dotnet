@@ -23,15 +23,8 @@ public class BankSimulatorClientTests
     public async Task ProcessPaymentAsync_ShouldReturnBankPaymentResponse_WhenSuccessful()
     {
         // Arrange
-        var request = new BankPaymentRequest 
-        { 
-            CardNumber = "4111111111111111", 
-            ExpiryDate = "12/2025", 
-            Currency = "USD", 
-            Amount = 1000, 
-            Cvv = "123" 
-        };
-        var bankResponse = new BankPaymentResponse { Authorized = true, AuthorizationCode = "AUTH123" };
+        var request = new BankPaymentRequest("4111111111111111", "12/2025", "USD", 1000, "123");
+        var bankResponse = new BankPaymentResponse(true, "AUTH123");
         var jsonResponse = JsonSerializer.Serialize(bankResponse);
 
         var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
@@ -67,15 +60,8 @@ public class BankSimulatorClientTests
     public async Task ProcessPaymentAsync_ShouldReturnBankPaymentResponse_WhenDeclined()
     {
         // Arrange
-        var request = new BankPaymentRequest 
-        { 
-            CardNumber = "5555555555554444", 
-            ExpiryDate = "06/2027", 
-            Currency = "EUR", 
-            Amount = 5000, 
-            Cvv = "456" 
-        };
-        var bankResponse = new BankPaymentResponse { Authorized = false, AuthorizationCode = "DECLINED" };
+        var request = new BankPaymentRequest("5555555555554444", "06/2027", "EUR", 5000, "456");
+        var bankResponse = new BankPaymentResponse(false, "DECLINED");
         var jsonResponse = JsonSerializer.Serialize(bankResponse);
 
         var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
@@ -111,14 +97,7 @@ public class BankSimulatorClientTests
     public async Task ProcessPaymentAsync_ShouldThrowBankSimulatorBadRequestException_WhenStatusCode400()
     {
         // Arrange
-        var request = new BankPaymentRequest 
-        { 
-            CardNumber = "invalid", 
-            ExpiryDate = "12/2025", 
-            Currency = "USD", 
-            Amount = 1000, 
-            Cvv = "123" 
-        };
+        var request = new BankPaymentRequest("invalid", "12/2025", "USD", 1000, "123");
 
         var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         handler.Protected()
@@ -145,14 +124,7 @@ public class BankSimulatorClientTests
     public async Task ProcessPaymentAsync_ShouldThrowBankSimulatorBadRequestException_WhenStatusCode401()
     {
         // Arrange
-        var request = new BankPaymentRequest 
-        { 
-            CardNumber = "4111111111111111", 
-            ExpiryDate = "12/2025", 
-            Currency = "USD", 
-            Amount = 1000, 
-            Cvv = "123" 
-        };
+        var request = new BankPaymentRequest("4111111111111111", "12/2025", "USD", 1000, "123");
 
         var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         handler.Protected()
@@ -179,14 +151,7 @@ public class BankSimulatorClientTests
     public async Task ProcessPaymentAsync_ShouldThrowBankSimulatorException_WhenStatusCode500()
     {
         // Arrange
-        var request = new BankPaymentRequest 
-        { 
-            CardNumber = "4111111111111111", 
-            ExpiryDate = "12/2025", 
-            Currency = "USD", 
-            Amount = 1000, 
-            Cvv = "123" 
-        };
+        var request = new BankPaymentRequest("4111111111111111", "12/2025", "USD", 1000, "123");
 
         var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         handler.Protected()
@@ -213,14 +178,7 @@ public class BankSimulatorClientTests
     public async Task ProcessPaymentAsync_ShouldThrowBankSimulatorException_WhenHttpRequestExceptionThrown()
     {
         // Arrange
-        var request = new BankPaymentRequest 
-        { 
-            CardNumber = "4111111111111111", 
-            ExpiryDate = "12/2025", 
-            Currency = "USD", 
-            Amount = 1000, 
-            Cvv = "123" 
-        };
+        var request = new BankPaymentRequest("4111111111111111", "12/2025", "USD", 1000, "123");
 
         var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         handler.Protected()
@@ -247,15 +205,8 @@ public class BankSimulatorClientTests
     public async Task ProcessPaymentAsync_ShouldPostToCorrectEndpoint()
     {
         // Arrange
-        var request = new BankPaymentRequest 
-        { 
-            CardNumber = "4111111111111111", 
-            ExpiryDate = "12/2025", 
-            Currency = "USD", 
-            Amount = 1000, 
-            Cvv = "123" 
-        };
-        var bankResponse = new BankPaymentResponse { Authorized = true, AuthorizationCode = "AUTH123" };
+        var request = new BankPaymentRequest("4111111111111111", "12/2025", "USD", 1000, "123");
+        var bankResponse = new BankPaymentResponse(true, "AUTH123");
         var jsonResponse = JsonSerializer.Serialize(bankResponse);
 
         var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);

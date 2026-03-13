@@ -282,7 +282,7 @@ public class ProcessPaymentCommandHandlerTests
             1000,
             "123");
 
-        var bankResponse = new BankPaymentResponse { Authorized = true, AuthorizationCode = "AUTH123" };
+        var bankResponse = new BankPaymentResponse(true, "AUTH123");
         _bankClientMock
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
@@ -366,7 +366,7 @@ public class ProcessPaymentCommandHandlerTests
             1000,
             "123");
 
-        var bankResponse = new BankPaymentResponse { Authorized = true, AuthorizationCode = "AUTH123" };
+        var bankResponse = new BankPaymentResponse(true, "AUTH123");
         _bankClientMock
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
@@ -394,7 +394,7 @@ public class ProcessPaymentCommandHandlerTests
             1000,
             "123");
 
-        var bankResponse = new BankPaymentResponse { Authorized = false, AuthorizationCode = "DECLINED" };
+        var bankResponse = new BankPaymentResponse(false, "DECLINED");
         _bankClientMock
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
@@ -422,7 +422,7 @@ public class ProcessPaymentCommandHandlerTests
             1000,
             "123");
 
-        var bankResponse = new BankPaymentResponse { Authorized = true, AuthorizationCode = "AUTH123" };
+        var bankResponse = new BankPaymentResponse(true, "AUTH123");
         _bankClientMock
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
@@ -463,7 +463,7 @@ public class ProcessPaymentCommandHandlerTests
             amount,
             "123");
 
-        var bankResponse = new BankPaymentResponse { Authorized = true, AuthorizationCode = "AUTH123" };
+        var bankResponse = new BankPaymentResponse(true, "AUTH123");
         _bankClientMock
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
@@ -490,7 +490,7 @@ public class ProcessPaymentCommandHandlerTests
             1000,
             "123");
 
-        var bankResponse = new BankPaymentResponse { Authorized = true, AuthorizationCode = "AUTH123" };
+        var bankResponse = new BankPaymentResponse(true, "AUTH123");
         _bankClientMock
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
@@ -517,7 +517,7 @@ public class ProcessPaymentCommandHandlerTests
             1000,
             "123");
 
-        var bankResponse = new BankPaymentResponse { Authorized = true, AuthorizationCode = "AUTH123" };
+        var bankResponse = new BankPaymentResponse(true, "AUTH123");
         _bankClientMock
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
@@ -548,7 +548,7 @@ public class ProcessPaymentCommandHandlerTests
             5000,
             "456");
 
-        var bankResponse = new BankPaymentResponse { Authorized = true, AuthorizationCode = "AUTH456" };
+        var bankResponse = new BankPaymentResponse(true, "AUTH456");
         _bankClientMock
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
@@ -582,7 +582,7 @@ public class ProcessPaymentCommandHandlerTests
             1000,
             "123");
 
-        var bankResponse = new BankPaymentResponse { Authorized = false, AuthorizationCode = "DECLINED_INSUFFICIENT_FUNDS" };
+        var bankResponse = new BankPaymentResponse(false, "DECLINED_INSUFFICIENT_FUNDS");
         _bankClientMock
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);

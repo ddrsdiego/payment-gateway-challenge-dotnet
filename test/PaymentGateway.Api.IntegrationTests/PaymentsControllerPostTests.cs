@@ -44,7 +44,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             Cvv = "123"
         };
 
-        var bankResponse = new BankPaymentResponse { Authorized = true, AuthorizationCode = "AUTH123" };
+        var bankResponse = new BankPaymentResponse(true, "AUTH123");
         _factory.BankSimulatorClientMock
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
@@ -78,7 +78,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             Cvv = "456"
         };
 
-        var bankResponse = new BankPaymentResponse { Authorized = false, AuthorizationCode = "DECLINED" };
+        var bankResponse = new BankPaymentResponse(false, "DECLINED");
         _factory.BankSimulatorClientMock
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);

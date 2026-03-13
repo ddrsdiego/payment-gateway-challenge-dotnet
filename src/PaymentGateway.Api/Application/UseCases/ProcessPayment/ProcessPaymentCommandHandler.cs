@@ -112,14 +112,12 @@ public sealed class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymen
     {
         try
         {
-            var bankRequest = new BankPaymentRequest
-            {
-                CardNumber = request.CardNumber,
-                ExpiryDate = $"{request.ExpiryMonth:D2}/{request.ExpiryYear}",
-                Currency = money.Currency,
-                Amount = money.Amount,
-                Cvv = request.Cvv
-            };
+            var bankRequest = new BankPaymentRequest(
+                request.CardNumber,
+                $"{request.ExpiryMonth:D2}/{request.ExpiryYear}",
+                money.Currency,
+                money.Amount,
+                request.Cvv);
 
             var bankResponse = await _bankSimulatorClient.ProcessPaymentAsync(bankRequest, cancellationToken);
             return Result.Success<BankPaymentResponse, Response>(bankResponse);
