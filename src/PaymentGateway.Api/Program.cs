@@ -1,19 +1,24 @@
-using PaymentGateway.Api.Services;
+using PaymentGateway.Api.Extensions;
+using PaymentGateway.Api.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.Configure<BankSimulatorOptions>(builder.Configuration.GetSection("BankSimulator"));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddPaymentGatewayServices(builder.Configuration);
 
-builder.Services.AddSingleton<PaymentsRepository>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

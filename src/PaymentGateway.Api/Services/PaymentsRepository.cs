@@ -1,18 +1,23 @@
-﻿using PaymentGateway.Api.Models.Responses;
+﻿namespace PaymentGateway.Api.Services;
 
-namespace PaymentGateway.Api.Services;
+using System.Collections.Concurrent;
+using CSharpFunctionalExtensions;
+using Domain.Entities;
+using Interfaces;
 
-public class PaymentsRepository
+public class PaymentsRepository : IPaymentsRepository
 {
-    public List<PostPaymentResponse> Payments = new();
-    
-    public void Add(PostPaymentResponse payment)
+    private readonly ConcurrentDictionary<Guid, Payment> _payments = new();
+
+    public void Add(Payment payment)
     {
-        Payments.Add(payment);
+        _payments.TryAdd(payment.Id, payment);
     }
 
-    public PostPaymentResponse Get(Guid id)
+    public Maybe<Payment> GetById(Guid id)
     {
-        return Payments.FirstOrDefault(p => p.Id == id);
+        return _payments.TryGetValue(id, out var payment)
+            ? Maybe<Payment>.From(payment)
+            : Maybe<Payment>.None;
     }
 }
