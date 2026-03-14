@@ -14,7 +14,7 @@ public static class GetPaymentErrors
                 ErrorResponse.Builder()
                     .WithInstance(Instance)
                     .WithTraceId(paymentId.ToString())
-                    .WithError("PAYMENT_NOT_FOUND", "PAYMENT_NOT_FOUND", "Payment not found")
+                    .WithError("PAYMENT_NOT_FOUND", "PAYMENT_NOT_FOUND", $"Payment {paymentId} not found")
                     .Build())
             .Build();
 }

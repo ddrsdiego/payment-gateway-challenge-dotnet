@@ -17,7 +17,6 @@ public sealed class GetPaymentQueryHandler : IRequestHandler<GetPaymentQuery, Re
     public Task<Response> Handle(GetPaymentQuery request, CancellationToken cancellationToken)
     {
         var paymentMaybe = _paymentsRepository.GetById(request.PaymentId);
-
         if (paymentMaybe.HasNoValue)
             return Task.FromResult(GetPaymentErrors.PaymentNotFound(request.PaymentId));
 

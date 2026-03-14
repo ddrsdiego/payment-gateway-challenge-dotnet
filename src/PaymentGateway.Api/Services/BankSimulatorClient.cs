@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace PaymentGateway.Api.Services;
 
 using System.Text.Json;
@@ -31,7 +33,6 @@ public class BankSimulatorClient : IBankSimulatorClient
                 "application/json");
 
             var response = await httpClient.PostAsync("/payments", jsonContent, cancellationToken);
-
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -42,20 +43,10 @@ public class BankSimulatorClient : IBankSimulatorClient
                 return bankResponse!;
             }
 
-            if ((int)response.StatusCode >= 400 && (int)response.StatusCode < 500)
-            {
+            if (response.StatusCode is >= HttpStatusCode.BadRequest and < HttpStatusCode.InternalServerError)
                 throw new BankSimulatorBadRequestException("Bank simulator returned a bad request error");
-            }
 
             throw new BankSimulatorException("Bank simulator service is unavailable");
-        }
-        catch (BankSimulatorBadRequestException)
-        {
-            throw;
-        }
-        catch (BankSimulatorException)
-        {
-            throw;
         }
         catch (HttpRequestException ex)
         {
