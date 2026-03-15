@@ -22,11 +22,15 @@ public class GetPaymentQueryHandlerTests
     {
         // Arrange
         var paymentId = Guid.NewGuid();
-        var cardNumber = "4111111111111111";
-        var expiryMonth = 12;
-        var expiryYear = 2027;
+        const string cardNumber = "4111111111111111";
+        const int expiryMonth = 12;
+        const int expiryYear = 2027;
+
         var money = Money.From(1000, "USD");
-        var payment = Payment.CreateAuthorized(cardNumber, expiryMonth, expiryYear, money);
+        var expiryCardDate = ExpiryCardDate.From(expiryMonth, expiryYear);
+        var authorizationCode = new AuthorizationCode(Guid.NewGuid().ToString());
+
+        var payment = Payment.CreateAuthorized(cardNumber, expiryCardDate, money, authorizationCode);
 
         var repositoryMock = new Mock<IPaymentsRepository>(MockBehavior.Strict);
         repositoryMock
@@ -43,7 +47,7 @@ public class GetPaymentQueryHandlerTests
         Assert.NotNull(response);
         Assert.True(response.IsSuccess);
         Assert.Equal(200, response.StatusCode);
-        
+
         var data = response.Data;
         Assert.NotNull(data);
 
@@ -55,11 +59,15 @@ public class GetPaymentQueryHandlerTests
     {
         // Arrange
         var paymentId = Guid.NewGuid();
-        var cardNumber = "5555555555554444";
-        var expiryMonth = 6;
-        var expiryYear = 2027;
+        const string cardNumber = "5555555555554444";
+        const int expiryMonth = 6;
+        const int expiryYear = 2027;
+
         var money = Money.From(5000, "EUR");
-        var payment = Payment.CreateAuthorized(cardNumber, expiryMonth, expiryYear, money);
+        var expiryCardDate = ExpiryCardDate.From(expiryMonth, expiryYear);
+        var authorizationCode = new AuthorizationCode(Guid.NewGuid().ToString());
+
+        var payment = Payment.CreateAuthorized(cardNumber, expiryCardDate, money, authorizationCode);
 
         var repositoryMock = new Mock<IPaymentsRepository>(MockBehavior.Strict);
         repositoryMock
@@ -112,7 +120,10 @@ public class GetPaymentQueryHandlerTests
         var paymentId = Guid.NewGuid();
         var cardNumber = "4111111111111111";
         var money = Money.From(amount, currency);
-        var payment = Payment.CreateAuthorized(cardNumber, 12, 2027, money);
+        var expiryCardDate = ExpiryCardDate.From(12, 2027);
+        var authorizationCode = new AuthorizationCode(Guid.NewGuid().ToString());
+
+        var payment = Payment.CreateAuthorized(cardNumber, expiryCardDate, money, authorizationCode);
 
         var repositoryMock = new Mock<IPaymentsRepository>(MockBehavior.Strict);
         repositoryMock
@@ -134,10 +145,13 @@ public class GetPaymentQueryHandlerTests
     public async Task Handle_ShouldReturnDeclinedPayment_WhenPaymentIsDeclined()
     {
         // Arrange
+        const string cardNumber = "4111111111111111";
+
         var paymentId = Guid.NewGuid();
-        var cardNumber = "4111111111111111";
         var money = Money.From(1000, "USD");
-        var payment = Payment.CreateDeclined(cardNumber, 12, 2027, money);
+        var expiryCardDate = ExpiryCardDate.From(12, 2027);
+        var authorizationCode = new AuthorizationCode(Guid.NewGuid().ToString());
+        var payment = Payment.CreateDeclined(cardNumber, expiryCardDate, money, authorizationCode);
 
         var repositoryMock = new Mock<IPaymentsRepository>(MockBehavior.Strict);
         repositoryMock

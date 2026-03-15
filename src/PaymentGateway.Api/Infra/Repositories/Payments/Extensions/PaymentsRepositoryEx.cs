@@ -10,31 +10,33 @@ internal static class PaymentsRepositoryEx
         {
             Id = payment.Id,
             CardNumberLastFour = payment.CardNumberLastFour.Value,
-            ExpiryMonth = payment.ExpiryMonth,
-            ExpiryYear = payment.ExpiryYear,
+            ExpiryMonth = payment.ExpiryCardDate.Month,
+            ExpiryYear = payment.ExpiryCardDate.Year,
             Status = payment.Status.ToString(),
             Amount = payment.Money.Amount,
-            Currency = payment.Money.Currency
+            Currency = payment.Money.Currency,
+            AuthorizationCode = payment.Authorization.Code
         };
-        
-        return data;    
+
+        return data;
     }
 
     public static Payment ToEntity(this PaymentsData paymentsData)
     {
         var money = Money.From(paymentsData.Amount, paymentsData.Currency);
         var cardLastFourDigits = CardLastFourDigits.FromDataBase(paymentsData.CardNumberLastFour);
-
+        var expiryCardDate = ExpiryCardDate.From(paymentsData.ExpiryMonth, paymentsData.ExpiryYear);
+        var authorizationCode = new AuthorizationCode(paymentsData.AuthorizationCode);
+        
         var status = Enum.Parse<PaymentStatus>(paymentsData.Status);
 
         var payment = new Payment(
             paymentsData.Id,
             status,
             cardLastFourDigits,
-            paymentsData.ExpiryMonth,
-            paymentsData.ExpiryYear,
-            money
-        );
+            expiryCardDate,
+            money,
+            authorizationCode);
 
         return payment;
     }

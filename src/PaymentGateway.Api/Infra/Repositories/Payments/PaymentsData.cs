@@ -9,4 +9,5 @@ internal class PaymentsData
     public int ExpiryYear { get; set; }
     public int Amount { get; set; }
     public string Currency { get; set; }
+    public string AuthorizationCode { get; set; }
 }

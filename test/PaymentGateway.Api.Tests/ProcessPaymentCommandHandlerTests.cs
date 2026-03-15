@@ -439,8 +439,8 @@ public class ProcessPaymentCommandHandlerTests
         Assert.NotEqual(Guid.Empty, capturedPayment.Id);
         Assert.Equal(PaymentStatus.Authorized, capturedPayment.Status);
         Assert.Equal("1111", capturedPayment.CardNumberLastFour.Value);
-        Assert.Equal(12, capturedPayment.ExpiryMonth);
-        Assert.Equal(futureYear, capturedPayment.ExpiryYear);
+        Assert.Equal(12, capturedPayment.ExpiryCardDate.Month);
+        Assert.Equal(futureYear, capturedPayment.ExpiryCardDate.Year);
         Assert.Equal("USD", capturedPayment.Money.Currency);
         Assert.Equal(1000, capturedPayment.Money.Amount);
     }

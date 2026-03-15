@@ -27,8 +27,8 @@ public sealed class GetPaymentQueryHandler : IRequestHandler<GetPaymentQuery, Re
             Id = payment.Id,
             Status = payment.Status,
             CardNumberLastFour = payment.CardNumberLastFour.Value,
-            ExpiryMonth = payment.ExpiryMonth,
-            ExpiryYear = payment.ExpiryYear,
+            ExpiryMonth = payment.ExpiryCardDate.Month,
+            ExpiryYear = payment.ExpiryCardDate.Year,
             Currency = payment.Money.Currency,
             Amount = payment.Money.Amount
         };

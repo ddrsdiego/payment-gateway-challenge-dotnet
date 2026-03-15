@@ -65,16 +65,18 @@ public class PaymentsControllerTests
         var currency = "USD";
         var amount = 1000;
         var money = Money.From(amount, currency);
+        var expiryCardDate = ExpiryCardDate.From(expiryMonth, expiryYear);
+        var authorizationCode = new AuthorizationCode(Guid.NewGuid().ToString());
 
         // Act
-        var payment = Payment.CreateAuthorized(cardNumber, expiryMonth, expiryYear, money);
+        var payment = Payment.CreateAuthorized(cardNumber, expiryCardDate, money, authorizationCode);
 
         // Assert
         Assert.NotEqual(Guid.Empty, payment.Id);
         Assert.Equal(PaymentStatus.Authorized, payment.Status);
         Assert.Equal("1111", payment.CardNumberLastFour.Value);
-        Assert.Equal(expiryMonth, payment.ExpiryMonth);
-        Assert.Equal(expiryYear, payment.ExpiryYear);
+        Assert.Equal(expiryMonth, payment.ExpiryCardDate.Month);
+        Assert.Equal(expiryYear, payment.ExpiryCardDate.Year);
         Assert.Equal(currency, payment.Money.Currency);
         Assert.Equal(amount, payment.Money.Amount);
     }
@@ -88,17 +90,20 @@ public class PaymentsControllerTests
         var expiryYear = 2027;
         var currency = "EUR";
         var amount = 5000;
+
         var money = Money.From(amount, currency);
+        var expiryCardDate = ExpiryCardDate.From(expiryMonth, expiryYear);
+        var authorizationCode = new AuthorizationCode(Guid.NewGuid().ToString());
 
         // Act
-        var payment = Payment.CreateDeclined(cardNumber, expiryMonth, expiryYear, money);
+        var payment = Payment.CreateDeclined(cardNumber, expiryCardDate, money, authorizationCode);
 
         // Assert
         Assert.NotEqual(Guid.Empty, payment.Id);
         Assert.Equal(PaymentStatus.Declined, payment.Status);
         Assert.Equal("4444", payment.CardNumberLastFour.Value);
-        Assert.Equal(expiryMonth, payment.ExpiryMonth);
-        Assert.Equal(expiryYear, payment.ExpiryYear);
+        Assert.Equal(expiryMonth, payment.ExpiryCardDate.Month);
+        Assert.Equal(expiryYear, payment.ExpiryCardDate.Year);
         Assert.Equal(currency, payment.Money.Currency);
         Assert.Equal(amount, payment.Money.Amount);
     }

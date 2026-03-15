@@ -11,7 +11,6 @@ using PaymentGateway.Api.Models.Responses;
 
 namespace PaymentGateway.Api.Application.UseCases.ProcessPayment;
 
-
 public sealed class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentCommand, Response>
 {
     private readonly IBankSimulatorClient _bankSimulatorClient;
@@ -40,13 +39,19 @@ public sealed class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymen
         if (moneyResult.IsFailure)
             return moneyResult.Error;
 
+        var expiryCardDateResult = CreateExpiryCardDate(request);
+        if (expiryCardDateResult.IsFailure)
+            return expiryCardDateResult.Error;
+
         try
         {
-            var bankAuthorizationResult = await GetBankAuthorizationAsync(request, moneyResult.Value, cancellationToken);
+            var bankAuthorizationResult = await GetBankAuthorizationAsync(request, expiryCardDateResult.Value,
+                moneyResult.Value, cancellationToken);
             if (bankAuthorizationResult.IsFailure)
                 return bankAuthorizationResult.Error;
 
-            var persistResult = PersistPayment(request, moneyResult.Value, bankAuthorizationResult.Value);
+            var persistResult = PersistPayment(request, expiryCardDateResult.Value, moneyResult.Value,
+                bankAuthorizationResult.Value);
             if (persistResult.IsFailure)
                 return persistResult.Error;
 
@@ -62,26 +67,43 @@ public sealed class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymen
 
     private static Result<Result, Response> ValidatePaymentInputs(ProcessPaymentCommand request)
     {
-        if (string.IsNullOrWhiteSpace(request.CardNumber) || request.CardNumber.Length < 14 || request.CardNumber.Length > 19)
+        if (string.IsNullOrWhiteSpace(request.CardNumber) || request.CardNumber.Length < 14 ||
+            request.CardNumber.Length > 19)
             return ProcessPaymentErrors.InvalidCardNumber(request.TracerId);
 
         if (!request.CardNumber.All(char.IsDigit))
             return ProcessPaymentErrors.CardNumberNotNumeric(request.TracerId);
 
-        if (request.ExpiryMonth is < 1 or > 12)
-            return ProcessPaymentErrors.InvalidExpiryMonth(request.TracerId);
-
-        if (request.ExpiryYear < DateTime.Now.Year ||
-            (request.ExpiryYear == DateTime.Now.Year && request.ExpiryMonth < DateTime.Now.Month))
-            return ProcessPaymentErrors.CardExpired(request.TracerId);
-
-        if (string.IsNullOrWhiteSpace(request.Cvv) 
-            || request.Cvv.Length < 3 
-            || request.Cvv.Length > 4 
+        if (string.IsNullOrWhiteSpace(request.Cvv)
+            || request.Cvv.Length < 3
+            || request.Cvv.Length > 4
             || !request.Cvv.All(char.IsDigit))
             return ProcessPaymentErrors.InvalidCvv(request.TracerId);
 
         return Result.Success<Result, Response>(Result.Success());
+    }
+
+    private static Result<ExpiryCardDate, Response> CreateExpiryCardDate(ProcessPaymentCommand request)
+    {
+        try
+        {
+            var expiryCardDate = ExpiryCardDate.From(request.ExpiryMonth, request.ExpiryYear);
+            if (expiryCardDate.IsExpired)
+                return Result.Failure<ExpiryCardDate, Response>(
+                    ProcessPaymentErrors.CardExpired(request.TracerId));
+
+            return Result.Success<ExpiryCardDate, Response>(expiryCardDate);
+        }
+        catch (ArgumentException ex) when (ex.ParamName == "expiryMonth")
+        {
+            return Result.Failure<ExpiryCardDate, Response>(
+                ProcessPaymentErrors.InvalidExpiryMonth(request.TracerId));
+        }
+        catch (ArgumentException ex) when (ex.ParamName == "expiryYear")
+        {
+            return Result.Failure<ExpiryCardDate, Response>(
+                ProcessPaymentErrors.InvalidExpiryMonth(request.TracerId));
+        }
     }
 
     private static Result<Money, Response> CreateMoney(ProcessPaymentCommand request)
@@ -105,6 +127,7 @@ public sealed class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymen
 
     private async Task<Result<BankPaymentResponse, Response>> GetBankAuthorizationAsync(
         ProcessPaymentCommand request,
+        ExpiryCardDate expiryCardDate,
         Money money,
         CancellationToken cancellationToken)
     {
@@ -112,7 +135,7 @@ public sealed class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymen
         {
             var bankRequest = new BankPaymentRequest(
                 request.CardNumber,
-                $"{request.ExpiryMonth:D2}/{request.ExpiryYear}",
+                expiryCardDate.ExpiryDate,
                 money.Currency,
                 money.Amount,
                 request.Cvv);
@@ -136,14 +159,16 @@ public sealed class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymen
 
     private Result<Response, Response> PersistPayment(
         ProcessPaymentCommand request,
+        ExpiryCardDate expiryCardDate,
         Money money,
         BankPaymentResponse bankResponse)
     {
         try
         {
+            var authorizationCode = new AuthorizationCode(bankResponse.AuthorizationCode);
             var payment = bankResponse.Authorized
-                ? Payment.CreateAuthorized(request.CardNumber, request.ExpiryMonth, request.ExpiryYear, money)
-                : Payment.CreateDeclined(request.CardNumber, request.ExpiryMonth, request.ExpiryYear, money);
+                ? Payment.CreateAuthorized(request.CardNumber, expiryCardDate, money, authorizationCode)
+                : Payment.CreateDeclined(request.CardNumber, expiryCardDate, money, authorizationCode);
 
             _paymentsRepository.Add(payment);
 
@@ -152,8 +177,8 @@ public sealed class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymen
                 Id = payment.Id,
                 Status = payment.Status,
                 CardNumberLastFour = payment.CardNumberLastFour.Value,
-                ExpiryMonth = payment.ExpiryMonth,
-                ExpiryYear = payment.ExpiryYear,
+                ExpiryMonth = payment.ExpiryCardDate.Month,
+                ExpiryYear = payment.ExpiryCardDate.Year,
                 Currency = payment.Money.Currency,
                 Amount = payment.Money.Amount
             };
