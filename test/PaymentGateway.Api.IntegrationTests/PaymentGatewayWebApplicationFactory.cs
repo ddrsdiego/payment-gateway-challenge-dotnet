@@ -1,12 +1,12 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+
 using Moq;
 
 using PaymentGateway.Api.Interfaces;
 
 namespace PaymentGateway.Api.IntegrationTests;
-
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 
 internal class PaymentGatewayWebApplicationFactory : WebApplicationFactory<Program>
 {

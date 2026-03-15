@@ -1,7 +1,4 @@
-using PaymentGateway.Api.Domain.ValueObjects;
-using PaymentGateway.Api.Models;
-
-namespace PaymentGateway.Api.Domain.Entities;
+namespace PaymentGateway.Api.Domain.Aggregates.PaymentAggregate;
 
 public class Payment
 {
@@ -12,7 +9,7 @@ public class Payment
     public int ExpiryYear { get; private set; }
     public Money Money { get; private set; }
 
-    private Payment(
+    internal Payment(
         Guid id,
         PaymentStatus status,
         CardLastFourDigits cardNumberLastFour,

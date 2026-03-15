@@ -1,10 +1,10 @@
-﻿using PaymentGateway.Api.Controllers;
-using PaymentGateway.Api.Domain.Entities;
-using PaymentGateway.Api.Domain.ValueObjects;
-using PaymentGateway.Api.Models;
-using PaymentGateway.Api.Models.Requests;
-using MediatR;
+﻿using MediatR;
+
 using Moq;
+
+using PaymentGateway.Api.Controllers;
+using PaymentGateway.Api.Domain.Aggregates.PaymentAggregate;
+using PaymentGateway.Api.Models.Requests;
 
 namespace PaymentGateway.Api.Tests;
 
@@ -35,7 +35,7 @@ public class PaymentsControllerTests
     public void PostPaymentRequest_CanBeCreatedWithValidData()
     {
         // Arrange & Act
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "4111111111111111",
             ExpiryMonth = 12,
@@ -72,7 +72,7 @@ public class PaymentsControllerTests
         // Assert
         Assert.NotEqual(Guid.Empty, payment.Id);
         Assert.Equal(PaymentStatus.Authorized, payment.Status);
-        Assert.Equal(1111, payment.CardNumberLastFour.Value);
+        Assert.Equal("1111", payment.CardNumberLastFour.Value);
         Assert.Equal(expiryMonth, payment.ExpiryMonth);
         Assert.Equal(expiryYear, payment.ExpiryYear);
         Assert.Equal(currency, payment.Money.Currency);
@@ -96,7 +96,7 @@ public class PaymentsControllerTests
         // Assert
         Assert.NotEqual(Guid.Empty, payment.Id);
         Assert.Equal(PaymentStatus.Declined, payment.Status);
-        Assert.Equal(4444, payment.CardNumberLastFour.Value);
+        Assert.Equal("4444", payment.CardNumberLastFour.Value);
         Assert.Equal(expiryMonth, payment.ExpiryMonth);
         Assert.Equal(expiryYear, payment.ExpiryYear);
         Assert.Equal(currency, payment.Money.Currency);

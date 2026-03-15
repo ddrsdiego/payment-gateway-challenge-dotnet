@@ -1,7 +1,6 @@
-namespace PaymentGateway.Api.Interfaces;
-
 using CSharpFunctionalExtensions;
-using Domain.Entities;
+
+namespace PaymentGateway.Api.Domain.Aggregates.PaymentAggregate;
 
 public interface IPaymentsRepository
 {

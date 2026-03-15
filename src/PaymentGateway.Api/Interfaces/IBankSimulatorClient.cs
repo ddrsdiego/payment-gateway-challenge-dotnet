@@ -1,6 +1,6 @@
-namespace PaymentGateway.Api.Interfaces;
+using PaymentGateway.Api.Models.Bank;
 
-using Models.Bank;
+namespace PaymentGateway.Api.Interfaces;
 
 public interface IBankSimulatorClient
 {

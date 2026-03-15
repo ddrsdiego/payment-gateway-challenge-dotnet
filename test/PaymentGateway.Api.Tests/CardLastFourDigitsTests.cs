@@ -1,4 +1,4 @@
-using PaymentGateway.Api.Domain.ValueObjects;
+using PaymentGateway.Api.Domain.Aggregates.PaymentAggregate;
 
 namespace PaymentGateway.Api.Tests;
 
@@ -15,7 +15,7 @@ public class CardLastFourDigitsTests
 
         // Assert
         Assert.NotNull(cardLastFour);
-        Assert.Equal(1111, cardLastFour.Value);
+        Assert.Equal("1111", cardLastFour.Value);
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class CardLastFourDigitsTests
 
         // Assert
         Assert.NotNull(cardLastFour);
-        Assert.Equal(4444, cardLastFour.Value);
+        Assert.Equal("4444", cardLastFour.Value);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class CardLastFourDigitsTests
 
         // Assert
         Assert.NotNull(cardLastFour);
-        Assert.Equal(1667, cardLastFour.Value);
+        Assert.Equal("1667", cardLastFour.Value);
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class CardLastFourDigitsTests
 
         // Assert
         Assert.NotNull(cardLastFour);
-        Assert.Equal(1234, cardLastFour.Value);
+        Assert.Equal("1234", cardLastFour.Value);
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class CardLastFourDigitsTests
 
         // Assert
         Assert.NotNull(cardLastFour);
-        Assert.Equal(1234, cardLastFour.Value);
+        Assert.Equal("1234", cardLastFour.Value);
     }
 
     [Fact]
@@ -138,15 +138,15 @@ public class CardLastFourDigitsTests
     }
 
     [Theory]
-    [InlineData("4111111111110000", 0)]
-    [InlineData("5555555555559999", 9999)]
-    [InlineData("3782822463100005", 5)]
-    public void From_ShouldExtractLastFourDigits_WithVariousCardNumbers(string cardNumber, int expectedLastFour)
+    [InlineData("4111111111110000", "0000")]
+    [InlineData("5555555555559999", "9999")]
+    [InlineData("3782822463100005", "0005")]
+    public void From_ShouldExtractLastFourDigits_WithVariousCardNumbers(string cardNumber, string expectedLastFour)
     {
         // Act
         var cardLastFour = CardLastFourDigits.From(cardNumber);
 
         // Assert
-        Assert.Equal(expectedLastFour, cardLastFour.Value);
+        Assert.Equal(expectedLastFour.ToString(), cardLastFour.Value);
     }
 }

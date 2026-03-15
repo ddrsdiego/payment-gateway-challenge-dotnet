@@ -1,13 +1,16 @@
 using System.Net;
+using System.Net.Mime;
+using System.Text;
+using System.Text.Json;
+
+using PaymentGateway.Api.Exceptions;
+using PaymentGateway.Api.Interfaces;
+using PaymentGateway.Api.Models.Bank;
 
 namespace PaymentGateway.Api.Services;
 
-using System.Text.Json;
-using Exceptions;
-using Interfaces;
-using Models.Bank;
-
-public class BankSimulatorClient : IBankSimulatorClient
+public sealed class BankSimulatorClient :
+    IBankSimulatorClient
 {
     private static readonly JsonSerializerOptions DefaultJsonSerializerOptions = new()
     {
@@ -29,8 +32,8 @@ public class BankSimulatorClient : IBankSimulatorClient
 
             var jsonContent = new StringContent(
                 JsonSerializer.Serialize(request),
-                System.Text.Encoding.UTF8,
-                "application/json");
+                Encoding.UTF8,
+                MediaTypeNames.Application.Json);
 
             var response = await httpClient.PostAsync("/payments", jsonContent, cancellationToken);
             if (response.IsSuccessStatusCode)

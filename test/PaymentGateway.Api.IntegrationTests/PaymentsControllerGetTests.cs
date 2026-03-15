@@ -1,7 +1,10 @@
-namespace PaymentGateway.Api.IntegrationTests;
+using System.Text;
 
 using Moq;
+
 using Xunit;
+
+namespace PaymentGateway.Api.IntegrationTests;
 
 public class PaymentsControllerGetTests : IAsyncLifetime
 {
@@ -32,7 +35,7 @@ public class PaymentsControllerGetTests : IAsyncLifetime
     public async Task GetPayment_ShouldReturn200OK_WhenPaymentExists()
     {
         // Arrange
-        var createRequest = new PostPaymentRequest
+        var createRequest = new CreatePaymentRequest
         {
             CardNumber = "4111111111111111",
             ExpiryMonth = 12,
@@ -47,10 +50,10 @@ public class PaymentsControllerGetTests : IAsyncLifetime
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
 
-        var createContent = new StringContent(JsonSerializer.Serialize(createRequest), System.Text.Encoding.UTF8, "application/json");
+        var createContent = new StringContent(JsonSerializer.Serialize(createRequest), Encoding.UTF8, "application/json");
         var createResponse = await _httpClient.PostAsync("/api/payments", createContent);
         var createResponseContent = await createResponse.Content.ReadAsStringAsync();
-        var createdPayment = JsonSerializer.Deserialize<PaymentResponse>(createResponseContent, JsonOptions);
+        var createdPayment = JsonSerializer.Deserialize<CreatePaymentResponse>(createResponseContent, JsonOptions);
 
         Assert.NotNull(createdPayment);
         var paymentId = createdPayment.Id;
@@ -61,7 +64,7 @@ public class PaymentsControllerGetTests : IAsyncLifetime
         // Assert
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
         var getResponseContent = await getResponse.Content.ReadAsStringAsync();
-        var retrievedPayment = JsonSerializer.Deserialize<PaymentResponse>(getResponseContent, JsonOptions);
+        var retrievedPayment = JsonSerializer.Deserialize<CreatePaymentResponse>(getResponseContent, JsonOptions);
         Assert.NotNull(retrievedPayment);
         Assert.Equal(paymentId, retrievedPayment.Id);
         Assert.Equal("Authorized", retrievedPayment.Status.ToString());

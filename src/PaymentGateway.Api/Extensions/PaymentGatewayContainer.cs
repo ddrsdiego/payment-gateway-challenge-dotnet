@@ -1,4 +1,6 @@
 ﻿using PaymentGateway.Api.Application.UseCases.ProcessPayment;
+using PaymentGateway.Api.Domain.Aggregates.PaymentAggregate;
+using PaymentGateway.Api.Infra.Repositories.Payments;
 using PaymentGateway.Api.Interfaces;
 using PaymentGateway.Api.Services;
 using PaymentGateway.Api.Settings;

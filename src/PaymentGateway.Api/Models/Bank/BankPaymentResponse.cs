@@ -1,6 +1,6 @@
-namespace PaymentGateway.Api.Models.Bank;
-
 using System.Text.Json.Serialization;
+
+namespace PaymentGateway.Api.Models.Bank;
 
 public record BankPaymentResponse(
     bool Authorized,

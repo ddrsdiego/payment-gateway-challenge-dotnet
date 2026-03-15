@@ -1,0 +1,12 @@
+﻿namespace PaymentGateway.Api.Infra.Repositories.Payments;
+
+internal class PaymentsData
+{
+    public Guid Id { get; set; }
+    public string Status { get; set; }
+    public string CardNumberLastFour { get; set; }
+    public int ExpiryMonth { get; set; }
+    public int ExpiryYear { get; set; }
+    public int Amount { get; set; }
+    public string Currency { get; set; }
+}

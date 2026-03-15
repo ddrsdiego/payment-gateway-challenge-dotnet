@@ -1,7 +1,10 @@
-namespace PaymentGateway.Api.IntegrationTests;
+using System.Text;
 
 using Moq;
+
 using Xunit;
+
+namespace PaymentGateway.Api.IntegrationTests;
 
 public class PaymentsControllerPostTests : IAsyncLifetime
 {
@@ -34,7 +37,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
         // Arrange
         _factory.BankSimulatorClientMock.Reset();
 
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "4111111111111111",
             ExpiryMonth = 12,
@@ -49,7 +52,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
 
-        var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _httpClient.PostAsync("/api/payments", content);
@@ -57,7 +60,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var responseContent = await response.Content.ReadAsStringAsync();
-        var paymentResponse = JsonSerializer.Deserialize<PaymentResponse>(responseContent, JsonOptions);
+        var paymentResponse = JsonSerializer.Deserialize<CreatePaymentResponse>(responseContent, JsonOptions);
         Assert.NotNull(paymentResponse);
         Assert.Equal("Authorized", paymentResponse.Status.ToString());
     }
@@ -68,7 +71,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
         // Arrange
         _factory.BankSimulatorClientMock.Reset();
 
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "5555555555554444",
             ExpiryMonth = 6,
@@ -83,7 +86,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(bankResponse);
 
-        var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _httpClient.PostAsync("/api/payments", content);
@@ -91,7 +94,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var responseContent = await response.Content.ReadAsStringAsync();
-        var paymentResponse = JsonSerializer.Deserialize<PaymentResponse>(responseContent, JsonOptions);
+        var paymentResponse = JsonSerializer.Deserialize<CreatePaymentResponse>(responseContent, JsonOptions);
         Assert.NotNull(paymentResponse);
         Assert.Equal("Declined", paymentResponse.Status.ToString());
     }
@@ -100,7 +103,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
     public async Task CreatePayment_ShouldReturn400BadRequest_WhenCardNumberIsTooShort()
     {
         // Arrange
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "123456789",
             ExpiryMonth = 12,
@@ -110,7 +113,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             Cvv = "123"
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _httpClient.PostAsync("/api/payments", content);
@@ -123,7 +126,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
     public async Task CreatePayment_ShouldReturn400BadRequest_WhenCardNumberIsTooLong()
     {
         // Arrange
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "12345678901234567890",
             ExpiryMonth = 12,
@@ -133,7 +136,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             Cvv = "123"
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _httpClient.PostAsync("/api/payments", content);
@@ -146,7 +149,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
     public async Task CreatePayment_ShouldReturn400BadRequest_WhenCardNumberIsNotNumeric()
     {
         // Arrange
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "411111111111111X",
             ExpiryMonth = 12,
@@ -156,7 +159,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             Cvv = "123"
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _httpClient.PostAsync("/api/payments", content);
@@ -169,7 +172,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
     public async Task CreatePayment_ShouldReturn400BadRequest_WhenExpiryMonthIsInvalid()
     {
         // Arrange
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "4111111111111111",
             ExpiryMonth = 13,
@@ -179,7 +182,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             Cvv = "123"
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _httpClient.PostAsync("/api/payments", content);
@@ -192,7 +195,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
     public async Task CreatePayment_ShouldReturn400BadRequest_WhenCardIsExpired()
     {
         // Arrange
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "4111111111111111",
             ExpiryMonth = 1,
@@ -202,7 +205,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             Cvv = "123"
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _httpClient.PostAsync("/api/payments", content);
@@ -215,7 +218,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
     public async Task CreatePayment_ShouldReturn400BadRequest_WhenCvvIsInvalid()
     {
         // Arrange
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "4111111111111111",
             ExpiryMonth = 12,
@@ -225,7 +228,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             Cvv = "12"
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _httpClient.PostAsync("/api/payments", content);
@@ -238,7 +241,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
     public async Task CreatePayment_ShouldReturn400BadRequest_WhenAmountIsInvalid()
     {
         // Arrange
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "4111111111111111",
             ExpiryMonth = 12,
@@ -248,7 +251,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             Cvv = "123"
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _httpClient.PostAsync("/api/payments", content);
@@ -261,7 +264,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
     public async Task CreatePayment_ShouldReturn400BadRequest_WhenCurrencyIsInvalid()
     {
         // Arrange
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "4111111111111111",
             ExpiryMonth = 12,
@@ -271,7 +274,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             Cvv = "123"
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _httpClient.PostAsync("/api/payments", content);
@@ -284,7 +287,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
     public async Task CreatePayment_ShouldReturn500InternalServerError_WhenBankSimulatorThrowsException()
     {
         // Arrange
-        var request = new PostPaymentRequest
+        var request = new CreatePaymentRequest
         {
             CardNumber = "4111111111111111",
             ExpiryMonth = 12,
@@ -298,7 +301,7 @@ public class PaymentsControllerPostTests : IAsyncLifetime
             .Setup(x => x.ProcessPaymentAsync(It.IsAny<BankPaymentRequest>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Bank simulator unavailable"));
 
-        var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _httpClient.PostAsync("/api/payments", content);

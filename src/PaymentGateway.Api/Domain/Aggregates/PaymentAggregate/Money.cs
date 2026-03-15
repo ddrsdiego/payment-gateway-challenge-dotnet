@@ -1,6 +1,6 @@
-namespace PaymentGateway.Api.Domain.ValueObjects;
+namespace PaymentGateway.Api.Domain.Aggregates.PaymentAggregate;
 
-public record Money
+public readonly record struct Money
 {
     private static readonly string[] ValidCurrencies = ["USD", "EUR", "GBP"];
 

@@ -1,4 +1,4 @@
-using PaymentGateway.Api.Domain.ValueObjects;
+using PaymentGateway.Api.Domain.Aggregates.PaymentAggregate;
 
 namespace PaymentGateway.Api.Tests;
 

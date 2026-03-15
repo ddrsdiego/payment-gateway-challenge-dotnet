@@ -1,5 +1,7 @@
 ﻿using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
+
 using PaymentGateway.Api.Application.UseCases.GetPayment;
 using PaymentGateway.Api.Controllers.Extensions;
 using PaymentGateway.Api.Models.Requests;
@@ -19,14 +21,14 @@ public class PaymentsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<PaymentResponse>> CreatePaymentAsync(PostPaymentRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<CreatePaymentResponse>> CreatePaymentAsync(CreatePaymentRequest request, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(request.ToCommand(), cancellationToken);
         return StatusCode(response.StatusCode, response.IsSuccess ? response.Data : response.ErrorContent!.ErrorResponse);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<PaymentResponse>> GetPayment(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<CreatePaymentResponse>> GetPayment(Guid id, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new GetPaymentQuery(id), cancellationToken);
         return StatusCode(response.StatusCode, response.IsSuccess ? response.Data : response.ErrorContent!.ErrorResponse);

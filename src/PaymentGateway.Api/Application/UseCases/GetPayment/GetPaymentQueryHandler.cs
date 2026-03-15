@@ -1,9 +1,10 @@
-namespace PaymentGateway.Api.Application.UseCases.GetPayment;
-
 using MediatR;
+
 using PaymentGateway.Api.Application.Utils;
-using PaymentGateway.Api.Interfaces;
+using PaymentGateway.Api.Domain.Aggregates.PaymentAggregate;
 using PaymentGateway.Api.Models.Responses;
+
+namespace PaymentGateway.Api.Application.UseCases.GetPayment;
 
 public sealed class GetPaymentQueryHandler : IRequestHandler<GetPaymentQuery, Response>
 {
@@ -21,7 +22,7 @@ public sealed class GetPaymentQueryHandler : IRequestHandler<GetPaymentQuery, Re
             return Task.FromResult(GetPaymentErrors.PaymentNotFound(request.PaymentId));
 
         var payment = paymentMaybe.Value;
-        var response = new PaymentResponse
+        var response = new CreatePaymentResponse
         {
             Id = payment.Id,
             Status = payment.Status,

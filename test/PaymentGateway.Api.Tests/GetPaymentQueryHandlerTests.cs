@@ -3,9 +3,7 @@ using CSharpFunctionalExtensions;
 using Moq;
 
 using PaymentGateway.Api.Application.UseCases.GetPayment;
-using PaymentGateway.Api.Domain.Entities;
-using PaymentGateway.Api.Domain.ValueObjects;
-using PaymentGateway.Api.Interfaces;
+using PaymentGateway.Api.Domain.Aggregates.PaymentAggregate;
 
 namespace PaymentGateway.Api.Tests;
 

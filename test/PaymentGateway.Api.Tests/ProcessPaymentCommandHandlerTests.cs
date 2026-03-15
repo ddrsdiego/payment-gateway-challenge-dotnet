@@ -4,10 +4,9 @@ using Microsoft.Extensions.Logging;
 using Moq;
 
 using PaymentGateway.Api.Application.UseCases.ProcessPayment;
-using PaymentGateway.Api.Domain.Entities;
+using PaymentGateway.Api.Domain.Aggregates.PaymentAggregate;
 using PaymentGateway.Api.Exceptions;
 using PaymentGateway.Api.Interfaces;
-using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Bank;
 
 namespace PaymentGateway.Api.Tests;
@@ -24,7 +23,7 @@ public class ProcessPaymentCommandHandlerTests
         _bankClientMock = new Mock<IBankSimulatorClient>(MockBehavior.Loose);
         _repositoryMock = new Mock<IPaymentsRepository>(MockBehavior.Loose);
         _loggerMock = new Mock<ILogger<ProcessPaymentCommandHandler>>(MockBehavior.Loose);
-        
+
         _handler = new ProcessPaymentCommandHandler(
             _bankClientMock.Object,
             _repositoryMock.Object,
@@ -439,7 +438,7 @@ public class ProcessPaymentCommandHandlerTests
         Assert.NotNull(capturedPayment);
         Assert.NotEqual(Guid.Empty, capturedPayment.Id);
         Assert.Equal(PaymentStatus.Authorized, capturedPayment.Status);
-        Assert.Equal(1111, capturedPayment.CardNumberLastFour.Value);
+        Assert.Equal("1111", capturedPayment.CardNumberLastFour.Value);
         Assert.Equal(12, capturedPayment.ExpiryMonth);
         Assert.Equal(futureYear, capturedPayment.ExpiryYear);
         Assert.Equal("USD", capturedPayment.Money.Currency);
@@ -564,7 +563,7 @@ public class ProcessPaymentCommandHandlerTests
         // Assert
         Assert.True(response.IsSuccess);
         Assert.NotNull(capturedPayment);
-        Assert.Equal(4444, capturedPayment.CardNumberLastFour.Value);
+        Assert.Equal("4444", capturedPayment.CardNumberLastFour.Value);
         Assert.Equal(PaymentStatus.Authorized, capturedPayment.Status);
     }
 

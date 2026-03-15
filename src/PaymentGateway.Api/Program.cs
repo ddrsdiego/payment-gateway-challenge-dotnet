@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 using PaymentGateway.Api.Extensions;
 using PaymentGateway.Api.Settings;
 
@@ -7,7 +9,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(
-            new System.Text.Json.Serialization.JsonStringEnumConverter());
+            new JsonStringEnumConverter());
     });
 
 builder.Services.Configure<BankSimulatorOptions>(builder.Configuration.GetSection("BankSimulator"));

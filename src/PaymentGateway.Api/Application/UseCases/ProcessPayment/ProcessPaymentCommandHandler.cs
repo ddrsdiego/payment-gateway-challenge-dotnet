@@ -3,8 +3,7 @@ using CSharpFunctionalExtensions;
 using MediatR;
 
 using PaymentGateway.Api.Application.Utils;
-using PaymentGateway.Api.Domain.Entities;
-using PaymentGateway.Api.Domain.ValueObjects;
+using PaymentGateway.Api.Domain.Aggregates.PaymentAggregate;
 using PaymentGateway.Api.Exceptions;
 using PaymentGateway.Api.Interfaces;
 using PaymentGateway.Api.Models.Bank;
@@ -15,7 +14,6 @@ namespace PaymentGateway.Api.Application.UseCases.ProcessPayment;
 
 public sealed class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentCommand, Response>
 {
-
     private readonly IBankSimulatorClient _bankSimulatorClient;
     private readonly IPaymentsRepository _paymentsRepository;
     private readonly ILogger<ProcessPaymentCommandHandler> _logger;
@@ -149,7 +147,7 @@ public sealed class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymen
 
             _paymentsRepository.Add(payment);
 
-            var response = new PaymentResponse
+            var response = new CreatePaymentResponse
             {
                 Id = payment.Id,
                 Status = payment.Status,

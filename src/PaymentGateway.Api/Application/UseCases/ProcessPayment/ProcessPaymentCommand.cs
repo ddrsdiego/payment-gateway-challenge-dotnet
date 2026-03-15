@@ -1,7 +1,8 @@
-namespace PaymentGateway.Api.Application.UseCases.ProcessPayment;
-
 using MediatR;
+
 using PaymentGateway.Api.Application.Utils;
+
+namespace PaymentGateway.Api.Application.UseCases.ProcessPayment;
 
 public record ProcessPaymentCommand(
     string TracerId,

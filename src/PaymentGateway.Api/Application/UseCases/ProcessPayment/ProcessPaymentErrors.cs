@@ -1,8 +1,8 @@
-namespace PaymentGateway.Api.Application.UseCases.ProcessPayment;
-
 using PaymentGateway.Api.Application.Utils;
 
-public static class ProcessPaymentErrors
+namespace PaymentGateway.Api.Application.UseCases.ProcessPayment;
+
+internal static class ProcessPaymentErrors
 {
     private const string Instance = "/ProcessPayment";
 
@@ -26,7 +26,8 @@ public static class ProcessPaymentErrors
                 ErrorResponse.Builder()
                     .WithInstance(Instance)
                     .WithTraceId(tracerId)
-                    .WithError("CARD_NUMBER_NOT_NUMERIC", "CARD_NUMBER_NOT_NUMERIC", "Card number must contain only digits")
+                    .WithError("CARD_NUMBER_NOT_NUMERIC", "CARD_NUMBER_NOT_NUMERIC",
+                        "Card number must contain only digits")
                     .Build())
             .Build();
 
@@ -98,7 +99,8 @@ public static class ProcessPaymentErrors
                 ErrorResponse.Builder()
                     .WithInstance(Instance)
                     .WithTraceId(tracerId)
-                    .WithError("BANK_SIMULATOR_BAD_REQUEST", "BANK_SIMULATOR_BAD_REQUEST", $"Bank simulator bad request: {error}")
+                    .WithError("BANK_SIMULATOR_BAD_REQUEST", "BANK_SIMULATOR_BAD_REQUEST",
+                        $"Bank simulator bad request: {error}")
                     .Build())
             .Build();
 
@@ -110,7 +112,8 @@ public static class ProcessPaymentErrors
                 ErrorResponse.Builder()
                     .WithInstance(Instance)
                     .WithTraceId(tracerId)
-                    .WithError("BANK_SIMULATOR_UNAVAILABLE", "BANK_SIMULATOR_UNAVAILABLE", $"Bank simulator unavailable: {error}")
+                    .WithError("BANK_SIMULATOR_UNAVAILABLE", "BANK_SIMULATOR_UNAVAILABLE",
+                        $"Bank simulator unavailable: {error}")
                     .Build())
             .Build();
 

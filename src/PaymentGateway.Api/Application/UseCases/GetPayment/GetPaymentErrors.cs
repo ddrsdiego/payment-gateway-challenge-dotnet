@@ -1,6 +1,6 @@
-namespace PaymentGateway.Api.Application.UseCases.GetPayment;
-
 using PaymentGateway.Api.Application.Utils;
+
+namespace PaymentGateway.Api.Application.UseCases.GetPayment;
 
 public static class GetPaymentErrors
 {

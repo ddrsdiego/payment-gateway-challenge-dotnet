@@ -1,4 +1,6 @@
 using System.Net;
+using System.Net.Mime;
+using System.Text;
 using System.Text.Json;
 
 using Moq;
@@ -36,7 +38,7 @@ public class BankSimulatorClientTests
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(jsonResponse, System.Text.Encoding.UTF8, "application/json")
+                Content = new StringContent(jsonResponse, Encoding.UTF8, MediaTypeNames.Application.Json)
             });
 
         var client = new HttpClient(handler.Object) { BaseAddress = new Uri("http://localhost:3000") };
@@ -73,7 +75,7 @@ public class BankSimulatorClientTests
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(jsonResponse, System.Text.Encoding.UTF8, "application/json")
+                Content = new StringContent(jsonResponse, Encoding.UTF8, MediaTypeNames.Application.Json)
             });
 
         var client = new HttpClient(handler.Object) { BaseAddress = new Uri("http://localhost:3000") };
@@ -220,7 +222,7 @@ public class BankSimulatorClientTests
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(jsonResponse, System.Text.Encoding.UTF8, "application/json")
+                Content = new StringContent(jsonResponse, Encoding.UTF8, MediaTypeNames.Application.Json)
             });
 
         var client = new HttpClient(handlerMock.Object) { BaseAddress = new Uri("http://localhost:3000") };

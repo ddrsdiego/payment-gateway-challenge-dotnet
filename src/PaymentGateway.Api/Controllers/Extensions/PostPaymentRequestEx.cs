@@ -5,7 +5,7 @@ namespace PaymentGateway.Api.Controllers.Extensions;
 
 public static class PostPaymentRequestEx
 {
-    public static ProcessPaymentCommand ToCommand(this PostPaymentRequest request)
+    public static ProcessPaymentCommand ToCommand(this CreatePaymentRequest request)
     {
         var tracerId = Guid.NewGuid().ToString();
 
